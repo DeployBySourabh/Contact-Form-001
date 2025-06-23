@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Animated Login/Signup</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #141e30, #243b55);
+            font-family: 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 20px;
+            height: 20px;
+            background-color: rgba(255, 75, 43, 0.7);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            mix-blend-mode: difference;
+        }
+        
+        .container-box {
+            width: 100%;
+            max-width: 900px;
+            height: 550px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            overflow: hidden;
+            display: flex;
+            position: relative;
+            background: white;
+        }
+        
+        .form-section,
+        .switch-section {
+            flex: 1;
+            padding: 40px 30px;
+        }
+        
+        .switch-section {
+            background: linear-gradient(to right, #ff416c, #ff4b2b);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .form-section h3 {
+            font-weight: bold;
+            margin-bottom: 25px;
+        }
+        
+        .form-control {
+            border-radius: 30px;
+            background: #f1f1f1;
+            border: none;
+            padding: 12px 20px;
+            margin-bottom: 20px;
+        }
+        
+        .btn-primary {
+            border-radius: 30px;
+            padding: 12px;
+            background: linear-gradient(to right, #ff416c, #ff4b2b);
+            border: none;
+            font-weight: bold;
+            width: 100%;
+            color: white;
+        }
+        
+        .btn-switch {
+            border: 2px solid #fff;
+            color: #fff;
+            border-radius: 30px;
+            padding: 10px 30px;
+            font-weight: bold;
+            background: transparent;
+        }
+        
+        .btn-switch:hover {
+            background: #fff;
+            color: #ff4b2b;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .error {
+            color: red;
+            font-size: 0.85rem;
+            margin-top: -15px;
+            margin-bottom: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .container-box {
+                flex-direction: column;
+                height: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="cursor" id="cursor"></div>
+
+    <div class="container-box">
+        <!-- Form Section -->
+        <div class="form-section" id="formSection">
+            <div id="loginForm">
+                <h3>Sign In</h3>
+                <form id="loginFormEl">
+                    <input type="text" class="form-control" placeholder="Username" id="loginUser">
+                    <div class="error" id="loginUserError"></div>
+                    <input type="password" class="form-control" placeholder="Password" id="loginPass">
+                    <div class="error" id="loginPassError"></div>
+                    <button type="submit" class="btn btn-primary">Sign In</button>
+                </form>
+            </div>
+
+            <div id="signupForm" class="hidden">
+                <h3>Sign Up</h3>
+                <form id="signupFormEl">
+                    <input type="text" class="form-control" placeholder="Username" id="signupUser">
+                    <div class="error" id="signupUserError"></div>
+                    <input type="email" class="form-control" placeholder="Email" id="signupEmail">
+                    <div class="error" id="signupEmailError"></div>
+                    <input type="password" class="form-control" placeholder="Password" id="signupPass">
+                    <div class="error" id="signupPassError"></div>
+                    <button type="submit" class="btn btn-primary">Create Account</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Switch Section -->
+        <div class="switch-section" id="switchSection">
+            <h2 id="switchTitle">Welcome to login</h2>
+            <p id="switchText">Don't have an account?</p>
+            <button class="btn-switch" id="toggleBtn">Sign Up</button>
+        </div>
+    </div>
+
+    <script>
+        const toggleBtn = document.getElementById('toggleBtn');
+        const loginForm = document.getElementById('loginForm');
+        const signupForm = document.getElementById('signupForm');
+        const switchTitle = document.getElementById('switchTitle');
+        const switchText = document.getElementById('switchText');
+        let isLogin = true;
+
+        toggleBtn.addEventListener('click', () => {
+            if (isLogin) {
+                gsap.to("#loginForm", {
+                    opacity: 0,
+                    duration: 0.3,
+                    onComplete: () => {
+                        loginForm.classList.add("hidden");
+                        signupForm.classList.remove("hidden");
+                        gsap.fromTo("#signupForm", {
+                            opacity: 0
+                        }, {
+                            opacity: 1,
+                            duration: 0.5
+                        });
+                    }
+                });
+                switchTitle.innerText = "Welcome Back!";
+                switchText.innerText = "Already have an account?";
+                toggleBtn.innerText = "Sign In";
+            } else {
+                gsap.to("#signupForm", {
+                    opacity: 0,
+                    duration: 0.3,
+                    onComplete: () => {
+                        signupForm.classList.add("hidden");
+                        loginForm.classList.remove("hidden");
+                        gsap.fromTo("#loginForm", {
+                            opacity: 0
+                        }, {
+                            opacity: 1,
+                            duration: 0.5
+                        });
+                    }
+                });
+                switchTitle.innerText = "Welcome to login";
+                switchText.innerText = "Don't have an account?";
+                toggleBtn.innerText = "Sign Up";
+            }
+            isLogin = !isLogin;
+        });
+
+        document.getElementById("loginFormEl").addEventListener("submit", function(e) {
+            e.preventDefault();
+            let valid = true;
+            document.getElementById("loginUserError").innerText = "";
+            document.getElementById("loginPassError").innerText = "";
+            if (document.getElementById("loginUser").value.trim() === '') {
+                document.getElementById("loginUserError").innerText = "Username required";
+                valid = false;
+            }
+            if (document.getElementById("loginPass").value.trim().length < 6) {
+                document.getElementById("loginPassError").innerText = "Password must be at least 6 characters";
+                valid = false;
+            }
+            if (valid) alert("Login successful (demo)");
+        });
+
+        document.getElementById("signupFormEl").addEventListener("submit", function(e) {
+            e.preventDefault();
+            let valid = true;
+            document.getElementById("signupUserError").innerText = "";
+            document.getElementById("signupEmailError").innerText = "";
+            document.getElementById("signupPassError").innerText = "";
+            if (document.getElementById("signupUser").value.trim() === '') {
+                document.getElementById("signupUserError").innerText = "Username required";
+                valid = false;
+            }
+            if (!document.getElementById("signupEmail").value.includes("@")) {
+                document.getElementById("signupEmailError").innerText = "Valid email required";
+                valid = false;
+            }
+            if (document.getElementById("signupPass").value.trim().length < 6) {
+                document.getElementById("signupPassError").innerText = "Password must be at least 6 characters";
+                valid = false;
+            }
+            if (valid) alert("Account created (demo)");
+        });
+
+        const cursor = document.getElementById("cursor");
+        window.addEventListener("mousemove", e => {
+            gsap.to(cursor, {
+                x: e.clientX,
+                y: e.clientY,
+                duration: 0.1,
+                ease: "power2.out"
+            });
+        });
+    </script>
+
+</body>
+
+</html>
